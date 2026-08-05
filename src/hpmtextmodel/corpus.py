@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from collections.abc import Iterable
-from typing import Callable, Sequence
+from typing import Callable, Sequence, Optional
 from bs4 import Tag
 from .text import Text, SentenceBoundary
 import os
@@ -84,3 +84,14 @@ class Corpus:
         )
         raise ValueError(message)
       yield own_text, other_text
+
+  def replace_in_transliteration(self, substring: str, replacement: str,
+                                 output_directory: str, language: Optional[str] = None) -> None:
+    for text in self.texts:
+      modified = False
+      for word in text.words:
+        if language is None or word.lang == language:
+          word_modified = word.replace_in_transliteration(substring, replacement)
+          modified = modified or word_modified
+      if modified:
+        text.store_in(output_directory)
