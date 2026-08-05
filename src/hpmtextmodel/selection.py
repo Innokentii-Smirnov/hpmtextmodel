@@ -7,14 +7,14 @@ class Selection:
     selection_pattern = re.compile(r'(\d+)([a-z]+)?([A-Z]+)?')
     sep = '.'
 
-    def get_elements(self) -> tuple[int, str, str]:
+    def get_elements(self) -> tuple[int, str | None, str | None]:
         return self.lexeme, self.gramm_form, self.encl_chain
 
     @classmethod
-    def from_strings(cls, lexeme: str, gramm_form: str, encl_chain: str) -> Selection:
+    def from_strings(cls, lexeme: str, gramm_form: str | None, encl_chain: str | None) -> Selection:
         return cls(int(lexeme), gramm_form, encl_chain)
 
-    def __init__(self, lexeme: int, gramm_form: str, encl_chain: str):
+    def __init__(self, lexeme: int, gramm_form: str | None, encl_chain: str | None):
         self.lexeme = lexeme
         self.gramm_form = gramm_form
         self.encl_chain = encl_chain

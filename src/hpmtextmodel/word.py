@@ -148,3 +148,19 @@ class Word:
           self.swap_analyses(first_selection.lexeme, 1)
           first_selection.lexeme = 1
           self.write_selections()
+
+  def normalize_selections(self) -> None:
+    for i, selection in enumerate(self.selections):
+      if selection is not None:
+        if selection.lexeme in self.analyses:
+          analysis = self.analyses[selection.lexeme]
+          morph = Morph.parse(analysis)
+          if morph is not None:
+            if isinstance(morph, SingleMorph):
+              if selection.gramm_form is not None:
+                selection.gramm_form = None
+                self.write_selections()
+            elif isinstance(morph, MultiMorph) and len(morph.morph_tags) == 1:
+              if selection.gramm_form is None:
+                selection.gramm_form = first(morph.morph_tags)
+                self.write_selections()
