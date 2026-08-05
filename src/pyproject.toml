@@ -1,9 +1,13 @@
 [build-system]
 requires = [
-  "setuptools >= 77.0.3",
+  "hatchling >= 1.26",
   "beautifulsoup4",
   "lxml",
   "tqdm",
   "more_itertools"
 ]
-build-backend = "setuptools.build_meta"
+build-backend = "hatchling.build"
+
+[project]
+name = "hpmtextmodel"
+version = "0.0.1"
