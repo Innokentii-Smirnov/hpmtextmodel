@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from collections.abc import Iterable
+import re
 from more_itertools import first
 from .selection import Selection
 from .morph import Morph, SingleMorph, MultiMorph, Annotation
@@ -165,12 +166,12 @@ class Word:
                 selection.gramm_form = first(morph.morph_tags)
                 self.write_selections()
 
-  def replace_in_transliteration(self, substring: str, replacement: str) -> bool:
+  def replace_in_transliteration(self, pattern: re.Pattern[str], replacement: str) -> bool:
     modified = False
     for child in self.tag.children:
       if isinstance(child, NavigableString):
         string = str(child)
-        if substring in string:
+        if pattern.search(string) is not None:
           modified = True
-          child.replace_with(string.replace(substring, replacement))
+          child.replace_with(pattern.sub(replacement, string))
     return modified

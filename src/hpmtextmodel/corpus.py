@@ -2,6 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from collections.abc import Iterable
 from typing import Callable, Sequence, Optional
+import re
 from bs4 import Tag
 from .text import Text, SentenceBoundary
 import os
@@ -85,13 +86,14 @@ class Corpus:
         raise ValueError(message)
       yield own_text, other_text
 
-  def replace_in_transliteration(self, substring: str, replacement: str,
+  def replace_in_transliteration(self, substring_pattern: str, replacement: str,
                                  output_directory: str, language: Optional[str] = None) -> None:
+    pattern = re.compile(substring_pattern)
     for text in self.texts:
       modified = False
       for word in text.words:
         if language is None or word.lang == language:
-          word_modified = word.replace_in_transliteration(substring, replacement)
+          word_modified = word.replace_in_transliteration(pattern, replacement)
           modified = modified or word_modified
       if modified:
         text.store_in(output_directory)
