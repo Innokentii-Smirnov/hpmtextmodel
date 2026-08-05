@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from collections.abc import Iterable
 from typing import Callable, Sequence, Optional
-import re
+import regex as re
 from bs4 import Tag
 from .text import Text, SentenceBoundary
 import os

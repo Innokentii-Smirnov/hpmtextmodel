@@ -4,7 +4,8 @@ requires = [
   "beautifulsoup4",
   "lxml",
   "tqdm",
-  "more_itertools"
+  "more_itertools",
+  "regex"
 ]
 build-backend = "hatchling.build"
 
