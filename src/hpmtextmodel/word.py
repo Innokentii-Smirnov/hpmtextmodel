@@ -128,9 +128,9 @@ class Word:
     self.write_analysis(second_index)
 
   def write_selections(self) -> None:
-    selections_str = ' '.join(
+    selections_str = ' '.join(sorted(set(
       map(str, filter(lambda sel: sel is not None, self.selections))
-    )
+    )))
     self.tag.attrs['mrp0sel'] = selections_str
 
   def first_analysis_is_selected(self) -> bool:
