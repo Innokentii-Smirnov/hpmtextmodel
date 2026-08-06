@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from collections.abc import Iterable
 import re
 from more_itertools import first
+from bs4 import BeautifulSoup
 from .selection import Selection
 from .morph import Morph, SingleMorph, MultiMorph, Annotation
 from re import compile
@@ -167,11 +168,17 @@ class Word:
                 self.write_selections()
 
   def replace_in_transliteration(self, pattern: re.Pattern[str], replacement: str) -> bool:
-    modified = False
-    for child in self.tag.children:
-      if isinstance(child, NavigableString):
-        string = str(child)
-        if pattern.search(string) is not None:
-          modified = True
-          child.replace_with(pattern.sub(replacement, string))
+    modified = pattern.search(self.transliteration) is not None
+    new_transliteration = pattern.sub(replacement, self.transliteration)
+    new_word = BeautifulSoup('<w>' + new_transliteration + '</w>', 'xml')
+    new_contents = new_word.w
+    if new_contents is None:
+      raise ValueError('The modified transliteration could not be parsed:\n' + new_transliteration)
+    self.tag.clear()
+    # The list call is important
+    # because modifying the children
+    # generator which we are iterating over
+    # causes unexpected behaviour.
+    for child in list(new_contents.children):
+      self.tag.append(child)
     return modified
