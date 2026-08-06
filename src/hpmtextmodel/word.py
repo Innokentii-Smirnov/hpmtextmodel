@@ -168,7 +168,8 @@ class Word:
                 self.write_selections()
 
   def replace_in_transliteration(self, pattern: re.Pattern[str], replacement: str) -> bool:
-    modified = pattern.search(self.transliteration) is not None
+    if pattern.search(self.transliteration) is None:
+      return False
     new_transliteration = pattern.sub(replacement, self.transliteration)
     new_word = BeautifulSoup('<w>' + new_transliteration + '</w>', 'xml')
     new_contents = new_word.w
@@ -181,4 +182,4 @@ class Word:
     # causes unexpected behaviour.
     for child in list(new_contents.children):
       self.tag.append(child)
-    return modified
+    return True
