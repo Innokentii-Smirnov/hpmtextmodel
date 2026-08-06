@@ -53,14 +53,14 @@ class Word:
       transcription = tag['trans']
       assert isinstance(transcription, str)
     else:
-      logger.warning('A word has no transcription attribute: %s.', tag)
+      logger.debug('A word has no transcription attribute: %s.', tag)
       transcription = None
     if 'mrp0sel' in tag.attrs:
       mrp0sel = tag['mrp0sel']
       assert isinstance(mrp0sel, str)
       selections = list(map(Selection.parse, mrp0sel.split()))
     else:
-      logger.warning('A word has no selection attribute: %s.', tag)
+      logger.debug('A word has no selection attribute: %s.', tag)
       selections = []
     analyses = dict[int, str]()
     for attr, value in tag.attrs.items():
