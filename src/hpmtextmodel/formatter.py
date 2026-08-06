@@ -3,6 +3,10 @@ from bs4 import Tag
 from bs4.element import AttributeValueList
 from collections.abc import Iterable
 
+attribute_orders = {
+  'note': ['n', 'c']
+}
+
 class CustomFormatter(XMLFormatter):
 
   def attributes(self, tag: Tag) -> Iterable[tuple[str, str | AttributeValueList]]:
@@ -11,5 +15,11 @@ class CustomFormatter(XMLFormatter):
     :param tag: An object representing an XML tag.
     :return: An unsorted iterable of key, value pairs repsesenting the XML tag's attributes.
     """
-    for key, value in tag.attrs.items():
-      yield key, value
+    if tag.name in attribute_orders:
+      attribute_order = attribute_orders[tag.name]
+      for attribute in attribute_order:
+        if attribute in tag.attrs:
+          yield attribute, tag.attrs[attribute]
+    else:
+      for key, value in tag.attrs.items():
+        yield key, value
