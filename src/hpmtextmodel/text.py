@@ -14,6 +14,7 @@ from .line import Line
 from .word import Word
 from .morph import Annotation
 from .formatter import CustomFormatter
+from .bracket import BracketType
 
 SentenceBoundary = Literal['clb', 'parsep', 'parsep_dbl']
 
@@ -118,3 +119,11 @@ class Text:
         )
         logger.warning(message)
       yield own_word, other_word
+
+  def normalize_brackets(self, bracket_type: BracketType) -> bool:
+    text_modified = False
+    for line in self.lines:
+      line_modified = line.normalize_brackets(bracket_type, self.soup)
+      if line_modified:
+        text_modified = True
+    return text_modified

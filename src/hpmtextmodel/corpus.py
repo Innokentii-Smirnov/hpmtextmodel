@@ -13,6 +13,7 @@ from itertools import chain
 from logging import getLogger
 from .word import Word
 from .morph import Annotation
+from .bracket import BracketType
 logger = getLogger(__name__)
 
 PROCESSED_FILE_LOGGER_NAME = 'processed_files'
@@ -95,5 +96,12 @@ class Corpus:
         if language is None or word.lang == language:
           word_modified = word.replace_in_transliteration(pattern, replacement)
           modified = modified or word_modified
+      if modified:
+        text.store_in(output_directory)
+
+  def normalize_brackets(self, bracket_type: BracketType,
+                         output_directory: str) -> None:
+    for text in self.texts:
+      modified = text.normalize_brackets(bracket_type)
       if modified:
         text.store_in(output_directory)

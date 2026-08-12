@@ -183,3 +183,17 @@ class Word:
     for child in list(new_contents.children):
       self.tag.append(child)
     return True
+
+  def prepend(self, tag_name: str, soup: BeautifulSoup) -> None:
+    tag = soup.new_tag(tag_name)
+    if len(self.tag.contents) > 0:
+      self.tag.contents[0].insert_before(tag)
+    else:
+      self.tag.append(tag)
+
+  def append(self, tag_name: str, soup: BeautifulSoup) -> None:
+    tag = soup.new_tag(tag_name)
+    if len(self.tag.contents) > 0:
+      self.tag.contents[-1].insert_after(tag)
+    else:
+      self.tag.append(tag)

@@ -1,10 +1,11 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from collections.abc import Iterator, Iterable
-from bs4 import Tag
+from bs4 import Tag, BeautifulSoup
 from logging import getLogger
 from os.path import join
 from .word import Word
+from .bracket import BracketType, get_opening_bracket, get_closing_bracket
 
 @dataclass(frozen=True)
 class Line:
@@ -60,3 +61,27 @@ class Line:
       if element.name == 'w':
         word = Word.parse(element, self.language)
         yield word
+
+  def normalize_brackets(self, bracket_type: BracketType,
+                         soup: BeautifulSoup) -> bool:
+    """Ensure zero bracket balance at word boundaries.
+    """
+    opening_bracket = get_opening_bracket(bracket_type)
+    closing_bracket = get_closing_bracket(bracket_type)
+    bracket_balance = 0
+    line_modified = False
+    for word in self.words:
+      children = list(word.tag.children)
+      if bracket_balance > 0:
+        word.prepend(opening_bracket, soup)
+        line_modified = True
+      for child in children:
+        if isinstance(child, Tag):
+          if child.name == opening_bracket:
+            bracket_balance += 1
+          elif child.name == closing_bracket:
+            bracket_balance -= 1
+      if bracket_balance > 0:
+        word.append(closing_bracket, soup)
+        line_modified = True
+    return line_modified
