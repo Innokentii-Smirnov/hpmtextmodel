@@ -81,6 +81,12 @@ class Line:
             bracket_balance += 1
           elif child.name == closing_bracket:
             bracket_balance -= 1
+          elif child.name == 'del_in':
+            if bracket_balance > 0:
+              tag = soup.new_tag(closing_bracket)
+              child.insert_before(tag)
+              bracket_balance = 0
+              line_modified = True
       if bracket_balance > 0:
         word.append(closing_bracket, soup)
         line_modified = True
