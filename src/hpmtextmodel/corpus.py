@@ -14,6 +14,7 @@ from logging import getLogger
 from .word import Word
 from .morph import Annotation
 from .bracket import BracketType
+from .language import Language
 logger = getLogger(__name__)
 
 PROCESSED_FILE_LOGGER_NAME = 'processed_files'
@@ -100,8 +101,9 @@ class Corpus:
         text.store_in(output_directory)
 
   def normalize_brackets(self, bracket_type: BracketType,
-                         output_directory: str) -> None:
+                         output_directory: str,
+                         language: Optional[Language] = None) -> None:
     for text in self.texts:
-      modified = text.normalize_brackets(bracket_type)
+      modified = text.normalize_brackets(bracket_type, language)
       if modified:
         text.store_in(output_directory)

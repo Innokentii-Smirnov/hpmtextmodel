@@ -6,6 +6,7 @@ from logging import getLogger
 from os.path import join
 from .word import Word
 from .bracket import BracketType, get_opening_bracket, get_closing_bracket
+from .language import Language
 
 @dataclass(frozen=True)
 class Line:
@@ -61,6 +62,9 @@ class Line:
       if element.name == 'w':
         word = Word.parse(element, self.language)
         yield word
+
+  def contains_a_word_in_language(self, language: Language) -> bool:
+    return any(word.lang == language for word in self.words)
 
   def normalize_brackets(self, bracket_type: BracketType,
                          soup: BeautifulSoup) -> bool:

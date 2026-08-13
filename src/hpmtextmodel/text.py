@@ -5,7 +5,7 @@ import os
 from os import path
 from io import TextIOBase
 from logging import getLogger
-from typing import Literal, Sequence, IO
+from typing import Literal, Sequence, IO, Optional
 from itertools import chain
 from more_itertools import split_before, split_at
 from bs4 import Tag, BeautifulSoup
@@ -15,6 +15,7 @@ from .word import Word
 from .morph import Annotation
 from .formatter import CustomFormatter
 from .bracket import BracketType
+from .language import Language
 
 SentenceBoundary = Literal['clb', 'parsep', 'parsep_dbl']
 
@@ -120,10 +121,12 @@ class Text:
         logger.warning(message)
       yield own_word, other_word
 
-  def normalize_brackets(self, bracket_type: BracketType) -> bool:
+  def normalize_brackets(self, bracket_type: BracketType,
+                         language: Optional[Language] = None) -> bool:
     text_modified = False
     for line in self.lines:
-      line_modified = line.normalize_brackets(bracket_type, self.soup)
-      if line_modified:
-        text_modified = True
+      if language is None or line.contains_a_word_in_language(language):
+        line_modified = line.normalize_brackets(bracket_type, self.soup)
+        if line_modified:
+          text_modified = True
     return text_modified

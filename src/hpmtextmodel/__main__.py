@@ -33,6 +33,8 @@ if __name__ == '__main__':
                                  help='The type of brackets to normalize')
   norm_brack_parser.add_argument('--' + OUTPUT_DIRECTORY_ARGUMENT_NAME,
                                  help='A directory to store modified files')
+  norm_brack_parser.add_argument('--language', choices=['Hit', 'Hur'],
+                                 help='Perform bracket normalization only for lines that contain a word in the given language')
   args = parser.parse_args()
   corpus = Corpus(args.input_directory)
   subparser_args = {key: value for key, value in vars(args).items()
