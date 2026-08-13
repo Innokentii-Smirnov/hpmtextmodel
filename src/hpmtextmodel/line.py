@@ -71,7 +71,7 @@ class Line:
     bracket_balance = 0
     line_modified = False
     for word in self.words:
-      children = list(word.tag.children)
+      children = list(word.tag.descendants)
       if bracket_balance > 0:
         word.prepend(opening_bracket, soup)
         line_modified = True
