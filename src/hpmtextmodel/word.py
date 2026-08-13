@@ -194,6 +194,10 @@ class Word:
   def append(self, tag_name: str, soup: BeautifulSoup) -> None:
     tag = soup.new_tag(tag_name)
     if len(self.tag.contents) > 0:
-      self.tag.contents[-1].insert_after(tag)
+      last_child = self.tag.contents[-1]
+      if isinstance(last_child, Tag) and last_child.name == 'note':
+        last_child.insert_before(tag)
+      else:
+        last_child.insert_after(tag)
     else:
       self.tag.append(tag)
