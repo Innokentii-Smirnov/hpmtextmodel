@@ -97,6 +97,6 @@ class Line:
               bracket_balance = 0
               line_modified = True
       if bracket_balance > 0:
-        word.append(closing_bracket, soup)
+        word.append(closing_bracket, soup, opening_bracket)
         line_modified = True
     return line_modified

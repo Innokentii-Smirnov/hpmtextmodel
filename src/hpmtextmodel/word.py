@@ -197,12 +197,21 @@ class Word:
     else:
       self.tag.append(tag)
 
-  def append(self, tag_name: str, soup: BeautifulSoup) -> None:
+  def append(self, tag_name: str, soup: BeautifulSoup, opening_bracket: str) -> None:
     tag = soup.new_tag(tag_name)
     if len(self.tag.contents) > 0:
       last_child = self.tag.contents[-1]
       if isinstance(last_child, Tag) and last_child.name == 'note':
-        last_child.insert_before(tag)
+        if len(self.tag.contents) == 1:
+          last_child.insert_before(tag)
+          return
+        else:
+          # Assume the note is not counted as a child.
+          last_child = self.tag.contents[-2]
+      if isinstance(last_child, Tag) and \
+        any(isinstance(grandson, Tag) and grandson.name == opening_bracket
+            for grandson in last_child.children):
+        last_child.contents[-1].insert_after(tag)
       else:
         last_child.insert_after(tag)
     else:
