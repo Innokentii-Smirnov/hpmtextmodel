@@ -184,10 +184,16 @@ class Word:
       self.tag.append(child)
     return True
 
-  def prepend(self, tag_name: str, soup: BeautifulSoup) -> None:
+  def prepend(self, tag_name: str, soup: BeautifulSoup, closing_bracket: str) -> None:
     tag = soup.new_tag(tag_name)
     if len(self.tag.contents) > 0:
-      self.tag.contents[0].insert_before(tag)
+      first_child = self.tag.contents[0]
+      if isinstance(first_child, Tag) and first_child.name == 'd' and \
+        any(isinstance(grandson, Tag) and grandson.name == closing_bracket
+            for grandson in first_child.children):
+        first_child.contents[0].insert_before(tag)
+      else:
+        first_child.insert_before(tag)
     else:
       self.tag.append(tag)
 
