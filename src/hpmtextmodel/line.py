@@ -82,7 +82,12 @@ class Line:
       for child in children:
         if isinstance(child, Tag):
           if child.name == opening_bracket:
-            bracket_balance += 1
+            if bracket_balance > 0:
+              # Nested bracketing is not needed
+              child.extract()
+              line_modified = True
+            else:
+              bracket_balance += 1
           elif child.name == closing_bracket:
             bracket_balance -= 1
           elif child.name == 'del_in':
