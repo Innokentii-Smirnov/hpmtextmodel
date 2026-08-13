@@ -188,7 +188,7 @@ class Word:
     tag = soup.new_tag(tag_name)
     if len(self.tag.contents) > 0:
       first_child = self.tag.contents[0]
-      if isinstance(first_child, Tag) and first_child.name == 'd' and \
+      if isinstance(first_child, Tag) and \
         any(isinstance(grandson, Tag) and grandson.name == closing_bracket
             for grandson in first_child.children):
         first_child.contents[0].insert_before(tag)
