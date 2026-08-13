@@ -107,3 +107,7 @@ class Corpus:
       modified = text.normalize_brackets(bracket_type, language)
       if modified:
         text.store_in(output_directory)
+
+  def rewrite(self, output_directory: str) -> None:
+    for text in self.texts:
+      text.store_in(output_directory)

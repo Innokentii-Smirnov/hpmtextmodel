@@ -35,6 +35,11 @@ if __name__ == '__main__':
                                  help='A directory to store modified files')
   norm_brack_parser.add_argument('--language', choices=['Hit', 'Hur'],
                                  help='Perform bracket normalization only for lines that contain a word in the given language')
+  rewrite_parser = subparsers.add_parser('rewrite',
+    help='Rewrite the corpus, normalizing formatting like the order of some XML attributes'
+  )
+  rewrite_parser.add_argument('--' + OUTPUT_DIRECTORY_ARGUMENT_NAME,
+                              help='A directory to store modified files')
   args = parser.parse_args()
   corpus = Corpus(args.input_directory)
   subparser_args = {key: value for key, value in vars(args).items()
