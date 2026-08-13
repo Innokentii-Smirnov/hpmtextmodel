@@ -89,7 +89,7 @@ class Line:
             else:
               bracket_balance += 1
           elif child.name == closing_bracket:
-            bracket_balance -= 1
+            bracket_balance = 0
           elif child.name == 'del_in':
             if bracket_balance > 0:
               tag = soup.new_tag(closing_bracket)
