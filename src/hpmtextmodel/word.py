@@ -14,6 +14,9 @@ from os import remove
 from logging import getLogger
 logger = getLogger(__name__)
 
+LAES_FIN_STR = '⸣'
+LAES_FIN_TAG_NAME = 'laes_fin'
+
 def get_postdet(tag: Tag) -> str | None:
   children = list(tag.children)
   if len(children) > 1:
@@ -216,3 +219,14 @@ class Word:
         last_child.insert_after(tag)
     else:
       self.tag.append(tag)
+
+  def replace_laes_fin_str_with_tag(self, soup: BeautifulSoup) -> bool:
+    modified = False
+    for child in list(self.tag.children):
+      if isinstance(child, NavigableString) and LAES_FIN_STR in child:
+        left, _, right = child.partition(LAES_FIN_STR)
+        laes_fin_tag = soup.new_tag(LAES_FIN_TAG_NAME)
+        child.insert_after(left, laes_fin_tag, right)
+        child.extract()
+        modified = True
+    return modified
