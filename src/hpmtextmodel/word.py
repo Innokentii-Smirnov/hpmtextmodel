@@ -14,8 +14,10 @@ from os import remove
 from logging import getLogger
 logger = getLogger(__name__)
 
-LAES_FIN_STR = '⸣'
-LAES_FIN_TAG_NAME = 'laes_fin'
+bracket_tag_name_pairs = [
+  ('⸢', 'laes_in'),
+  ('⸣', 'laes_fin')
+]
 
 def get_postdet(tag: Tag) -> str | None:
   children = list(tag.children)
@@ -220,13 +222,21 @@ class Word:
     else:
       self.tag.append(tag)
 
-  def replace_laes_fin_str_with_tag(self, soup: BeautifulSoup) -> bool:
+  def replace_brackets_with_tags(self, soup: BeautifulSoup) -> bool:
+    modified = False
+    for bracket, tag_name in bracket_tag_name_pairs:
+      replaced = self.replace_string_with_tag(bracket, tag_name, soup)
+      if replaced:
+        modified = True
+    return modified
+
+  def replace_string_with_tag(self, string: str, tag_name: str, soup: BeautifulSoup) -> bool:
     modified = False
     for child in list(self.tag.children):
-      if isinstance(child, NavigableString) and LAES_FIN_STR in child:
-        left, _, right = child.partition(LAES_FIN_STR)
-        laes_fin_tag = soup.new_tag(LAES_FIN_TAG_NAME)
-        child.insert_after(left, laes_fin_tag, right)
+      if isinstance(child, NavigableString) and string in child:
+        left, _, right = child.partition(string)
+        tag = soup.new_tag(tag_name)
+        child.insert_after(left, tag, right)
         child.extract()
         modified = True
     return modified
