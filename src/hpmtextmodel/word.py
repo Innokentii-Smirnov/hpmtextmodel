@@ -236,7 +236,6 @@ class Word:
       if isinstance(child, NavigableString) and string in child:
         left, _, right = child.partition(string)
         tag = soup.new_tag(tag_name)
-        child.insert_after(left, tag, right)
-        child.extract()
+        child.replace_with(left, tag, right)
         modified = True
     return modified
