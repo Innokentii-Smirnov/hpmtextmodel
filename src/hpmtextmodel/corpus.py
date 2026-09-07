@@ -66,6 +66,10 @@ class Corpus:
             )
 
   @property
+  def lines(self) -> Iterable[Line]:
+    return chain.from_iterable(text.lines for text in self.texts)
+
+  @property
   def words(self) -> Iterable[Word]:
     return chain.from_iterable(text.words for text in self.texts)
 
