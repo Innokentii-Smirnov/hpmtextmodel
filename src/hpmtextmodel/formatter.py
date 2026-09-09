@@ -4,6 +4,7 @@ from bs4.element import AttributeValueList
 from collections.abc import Iterable
 
 attribute_orders = {
+  'lb': ['txtid', 'lnr', 'lg', 'cu', 'cuDirty'],
   'note': ['n', 'c']
 }
 
