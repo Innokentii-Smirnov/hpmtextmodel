@@ -4,6 +4,7 @@ from collections.abc import Iterable
 import re
 from more_itertools import first
 from bs4 import BeautifulSoup
+from ambisegm.gensegm import generate_segmentations
 from .selection import Selection
 from .morph import Morph, SingleMorph, MultiMorph, Annotation
 from re import compile
@@ -13,6 +14,14 @@ from os.path import exists
 from os import remove
 from logging import getLogger
 logger = getLogger(__name__)
+
+CHOICE_TAG_NAME = 'choice'
+READING_TAG_NAME = 'rdg'
+WORD_TAG_NAME = 'w'
+
+# Constants for generate_segmentations
+OPTIONAL_BOUNDARY = '(-)'
+CONNECTING_STRING = '-'
 
 bracket_tag_name_pairs = [
   ('⸢', 'laes_in'),
@@ -240,3 +249,22 @@ class Word:
         child.replace_with(left, tag, right)
         modified = True
     return modified
+
+  def unpack_alternative_segmentations(self) -> None:
+    choice_tag = self.soup.new_tag(CHOICE_TAG_NAME)
+    alternative_segmentations = generate_segmentations(OPTIONAL_BOUNDARY,
+                                                       CONNECTING_STRING,
+                                                       self.transliteration)
+    for segmentation in alternative_segmentations:
+      reading_tag = self.soup.new_tag(READING_TAG_NAME)
+      for word in segmentation:
+        word_tag = self.soup.new_tag(WORD_TAG_NAME)
+        reading_tag.append(word_tag)
+      choice_tag.append(reading_tag)
+    old_tag = self.tag.replace_with(choice_tag)
+    first_reading = choice_tag.find(READING_TAG_NAME)
+    assert first_reading is not None
+    first_word = first_reading.find(WORD_TAG_NAME)
+    assert first_word is not None
+    for attr, val in old_tag.attrs.items():
+      first_word[attr] = val
