@@ -115,3 +115,9 @@ class Corpus:
   def rewrite(self, output_directory: str) -> None:
     for text in self.texts:
       text.store_in(output_directory)
+
+  def unpack_alternative_segmentations(self, output_directory: str) -> None:
+    for text in self.texts:
+      modified = text.unpack_alternative_segmentations()
+      if modified:
+        text.store_in(output_directory)

@@ -130,3 +130,11 @@ class Text:
         if line_modified:
           text_modified = True
     return text_modified
+
+  def unpack_alternative_segmentations(self) -> bool:
+    modified = False
+    for word in self.words:
+      if word.word_segmentation_is_ambiguous():
+        word.unpack_alternative_segmentations()
+        modified = True
+    return modified
