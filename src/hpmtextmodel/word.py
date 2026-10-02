@@ -28,6 +28,13 @@ bracket_tag_name_pairs = [
   ('⸣', 'laes_fin')
 ]
 
+def word_segmentation_is_ambiguous(transliteration: str) -> bool:
+  return OPTIONAL_BOUNDARY in transliteration and \
+    not transliteration.startswith(OPTIONAL_BOUNDARY) and \
+    not transliteration.endswith(OPTIONAL_BOUNDARY) and \
+    not transliteration.startswith('<del_fin/>' + OPTIONAL_BOUNDARY) and \
+    not transliteration.endswith(OPTIONAL_BOUNDARY + '<del_in/>')
+
 def get_postdet(tag: Tag) -> str | None:
   children = list(tag.children)
   if len(children) > 1:
@@ -268,3 +275,6 @@ class Word:
     assert first_word is not None
     for attr, val in old_tag.attrs.items():
       first_word[attr] = val
+
+  def word_segmentation_is_ambiguous(self) -> bool:
+    return word_segmentation_is_ambiguous(self.transliteration)
