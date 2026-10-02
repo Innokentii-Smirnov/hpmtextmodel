@@ -265,7 +265,9 @@ class Word:
     for segmentation in alternative_segmentations:
       reading_tag = self.soup.new_tag(READING_TAG_NAME)
       for word in segmentation:
-        word_tag = self.soup.new_tag(WORD_TAG_NAME)
+        word_soup = BeautifulSoup('<w>' + word + '</w>', 'xml')
+        word_tag = word_soup.w
+        assert word_tag is not None
         reading_tag.append(word_tag)
       choice_tag.append(reading_tag)
     old_tag = self.tag.replace_with(choice_tag)
