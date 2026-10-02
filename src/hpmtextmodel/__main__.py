@@ -40,6 +40,11 @@ if __name__ == '__main__':
   )
   rewrite_parser.add_argument('--' + OUTPUT_DIRECTORY_ARGUMENT_NAME,
                               help='A directory to store modified files')
+  unpack_alt_segm_parser = subparsers.add_parser('unpack_alternative_segmentations',
+    help='Convert tokens with ambiguous word segmentation to choice-elements'
+  )
+  unpack_alt_segm_parser.add_argument('--' + OUTPUT_DIRECTORY_ARGUMENT_NAME,
+                              help='A directory to store modified files')
   args = parser.parse_args()
   corpus = Corpus(args.input_directory)
   subparser_args = {key: value for key, value in vars(args).items()
