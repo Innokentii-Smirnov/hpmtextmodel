@@ -45,10 +45,11 @@ class Word:
   det: str | None
   postdet: str | None
   tag: Tag
+  soup: BeautifulSoup
   MRP = compile(r'mrp(\d+)')
 
   @classmethod
-  def parse(cls, tag: Tag, default_lang: str) -> Word:
+  def parse(cls, tag: Tag, default_lang: str, soup: BeautifulSoup) -> Word:
     assert tag.name == 'w'
     transliteration = tag.decode_contents()
     lang = tag.attrs.get('lg', default_lang)
@@ -82,7 +83,7 @@ class Word:
     else:
       det = None
     postdet = get_postdet(tag)
-    return Word(transliteration, lang, transcription, selections, analyses, det, postdet, tag)
+    return Word(transliteration, lang, transcription, selections, analyses, det, postdet, tag, soup)
 
   def __getitem__(self, number: int) -> Morph | None:
     return Morph.parse(self.analyses[number])

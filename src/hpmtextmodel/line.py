@@ -15,6 +15,7 @@ class Line:
   line_id: str
   language: str
   word_elements: list[Tag]
+  soup: BeautifulSoup
   logger = getLogger(__name__)
   UNKNOWN_LINE_ID = 'unknown'
   UNKNOWN_LANGUAGE = 'unknown'
@@ -26,7 +27,7 @@ class Line:
     return self.word_elements.__len__()
 
   @classmethod
-  def parse(cls, text_path: str, text_id: str, elements: list[Tag], text_lang: str) -> Line:
+  def parse(cls, text_path: str, text_id: str, elements: list[Tag], text_lang: str, soup: BeautifulSoup) -> Line:
     full_path = join(text_path, text_id)
     if (lb := elements[0]).name == 'lb':
       if 'lnr' in lb.attrs:
@@ -54,13 +55,13 @@ class Line:
       line_id = cls.UNKNOWN_LINE_ID
       language = cls.UNKNOWN_LANGUAGE
       word_elements = elements
-    return Line(text_path, text_id, line_id, language, word_elements)
+    return Line(text_path, text_id, line_id, language, word_elements, soup)
 
   @property
   def words(self) -> Iterable[Word]:
     for element in self.word_elements:
       if element.name == 'w':
-        word = Word.parse(element, self.language)
+        word = Word.parse(element, self.language, self.soup)
         yield word
 
   def contains_a_word_in_language(self, language: Language) -> bool:

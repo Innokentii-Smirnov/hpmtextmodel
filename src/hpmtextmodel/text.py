@@ -56,7 +56,7 @@ class Text:
       tokens = tokens[1:]
     for line_elements in split_before(tokens,
                                       lambda tag: tag.name == 'lb'):
-      line = Line.parse(self.rel_path, self.text_id, line_elements, self.text_lang)
+      line = Line.parse(self.rel_path, self.text_id, line_elements, self.text_lang, self.soup)
       yield line
 
   @property
