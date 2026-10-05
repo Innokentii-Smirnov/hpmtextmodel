@@ -28,12 +28,17 @@ bracket_tag_name_pairs = [
   ('⸣', 'laes_fin')
 ]
 
-def word_segmentation_is_ambiguous(transliteration: str) -> bool:
-  return OPTIONAL_BOUNDARY in transliteration and \
-    not transliteration.startswith(OPTIONAL_BOUNDARY) and \
-    not transliteration.endswith(OPTIONAL_BOUNDARY) and \
-    not transliteration.startswith('<del_fin/>' + OPTIONAL_BOUNDARY) and \
-    not transliteration.endswith(OPTIONAL_BOUNDARY + '<del_in/>')
+def word_segmentation_is_ambiguous(transcription: str) -> bool:
+  return OPTIONAL_BOUNDARY in transcription and \
+    not transcription.startswith(OPTIONAL_BOUNDARY) and \
+    not transcription.endswith(OPTIONAL_BOUNDARY) and \
+    not transcription.startswith(']' + OPTIONAL_BOUNDARY) and \
+    not transcription.startswith(']x' + OPTIONAL_BOUNDARY) and \
+    not transcription.startswith('x' + OPTIONAL_BOUNDARY) and \
+    not transcription.endswith(OPTIONAL_BOUNDARY + '[') and \
+    not transcription.endswith(OPTIONAL_BOUNDARY + 'x[') and \
+    not transcription.endswith(OPTIONAL_BOUNDARY + 'x') and \
+    not transcription.endswith(OPTIONAL_BOUNDARY + ' ')
 
 def get_postdet(tag: Tag) -> str | None:
   children = list(tag.children)
@@ -279,4 +284,6 @@ class Word:
       first_word[attr] = val
 
   def word_segmentation_is_ambiguous(self) -> bool:
-    return word_segmentation_is_ambiguous(self.transliteration)
+    if self.transcription is None:
+      return False
+    return word_segmentation_is_ambiguous(self.transcription)
