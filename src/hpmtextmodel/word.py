@@ -2,11 +2,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from collections.abc import Iterable
 import re
+import math
 from more_itertools import first
 from bs4 import BeautifulSoup
+from Levenshtein import distance
 from ambisegm.gensegm import generate_segmentations
 from .selection import Selection
 from .morph import Morph, SingleMorph, MultiMorph, Annotation
+from .composite_selection import CompositeSelection
 from re import compile
 from bs4 import Tag
 from bs4.element import NavigableString
@@ -15,6 +18,8 @@ from os import remove
 from logging import getLogger
 logger = getLogger(__name__)
 
+SELECTION_ATTR = 'mrp0sel'
+
 CHOICE_TAG_NAME = 'choice'
 READING_TAG_NAME = 'rdg'
 WORD_TAG_NAME = 'w'
@@ -22,6 +27,8 @@ WORD_TAG_NAME = 'w'
 # Constants for generate_segmentations
 OPTIONAL_BOUNDARY = '(-)'
 CONNECTING_STRING = '-'
+
+TRANSCRIPTION_CONNECTING_STRING = ''
 
 bracket_tag_name_pairs = [
   ('⸢', 'laes_in'),
@@ -56,7 +63,7 @@ def get_postdet(tag: Tag) -> str | None:
       return first(postdets)
   return None
 
-@dataclass(frozen=True)
+@dataclass
 class Word:
   transliteration: str
   lang: str
@@ -287,3 +294,56 @@ class Word:
     if self.transcription is None:
       return False
     return word_segmentation_is_ambiguous(self.transcription)
+
+  @property
+  def selection_string(self) -> str:
+    selection_string = self.tag.attrs[SELECTION_ATTR]
+    assert isinstance(selection_string, str)
+    return selection_string
+
+  @selection_string.setter
+  def selection_string(self, value: str) -> None:
+    self.tag.attrs[SELECTION_ATTR] = value
+
+  def assign_composite_selections(self) -> None:
+    if self.transcription is None:
+      return
+    alternative_segmentations = list(generate_segmentations(
+      OPTIONAL_BOUNDARY, TRANSCRIPTION_CONNECTING_STRING, self.transcription
+    ))
+    composite_selections = list[CompositeSelection]()
+    for word_segmentation in alternative_segmentations:
+      composite_selection = CompositeSelection(len(word_segmentation))
+      composite_selections.append(composite_selection)
+    for selection in self.selections:
+      if selection is None:
+        continue
+      analysis = self.analyses[selection.lexeme]
+      morph = Morph.parse(analysis)
+      if morph is None:
+        return
+      min_dist = math.inf
+      closest = (0, 0)
+      for segm_index, word_segmentation in enumerate(alternative_segmentations):
+        for word_index, wordform in enumerate(word_segmentation):
+          dist = distance(morph.segmentation, wordform)
+          if dist < min_dist:
+            min_dist = dist
+            closest = (segm_index, word_index)
+      (segm_index, word_index) = closest
+      composite_selections[segm_index][word_index].append(selection)
+    self.selection_string = ' '.join(
+      str(composite_selection) for composite_selection
+      in composite_selections if not composite_selection.is_empty()
+    )
+
+if __name__ == '__main__':
+  word_xml = """
+  <w mrp0sel=" 1a 2a 3a 4a 5a 6a 7a 8a" mrp1="ḫowe-ne @ u.B. @ { a  → ABL/INS} @ noun @ " mrp2="ḫowe-ne-e @ u.B. @ { a  → RELAT.SG-DIR/LOC} @ noun @ " mrp3="ḫowe+ni @ u.B. @ { a  → .ABS} @ noun @ " mrp4="ḫowe-ne-va @ u.B. @ { a  → RELAT.SG-DAT} @ noun @ " mrp5="ḫowe+ni-ie-va @ u.B. @ { a  → 3POSS.SG-DAT} @ noun @ " mrp6="nippi@u.B.@{ a → .ABS}@noun@" mrp7="nipp-i@u.B.@{ a → ANTIP}@verb@" mrp8="evani-iffe@u.B.@{ a → 1POSS.SG.ABS}@noun@" trans="ḫōeni(-)eva(-)nippi">ḫu-u-e-ni(-)e-wa<subscr c="a"/>(-)ni-ib-bi<note c="Das erste NI ist sehr langgezogen, sodass hier eine Lücke zu vermuten wäre. Das zweite NI steht direkt am WA + Subskription. Vgl. aber den Beleg in Rs. 2."/></w>
+  """
+  soup = BeautifulSoup(word_xml.strip(), 'xml')
+  word_tag = soup.w
+  assert word_tag is not None
+  word = Word.parse(word_tag, 'Hur', soup)
+  word.assign_composite_selections()
+  print(word.tag.prettify())

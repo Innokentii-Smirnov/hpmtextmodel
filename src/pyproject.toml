@@ -5,7 +5,8 @@ requires = [
   "lxml",
   "tqdm",
   "more_itertools",
-  "regex"
+  "regex",
+  "levenshtein"
 ]
 build-backend = "hatchling.build"
 

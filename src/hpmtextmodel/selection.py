@@ -1,9 +1,14 @@
 from __future__ import annotations
+from dataclasses import dataclass
 import re
 from logging import getLogger
 logger = getLogger(__name__)
 
+@dataclass(order=True)
 class Selection:
+    lexeme: int
+    gramm_form: str | None
+    encl_chain: str | None
     selection_pattern = re.compile(r'(\d+)([a-z]+)?([A-Z]+)?')
     sep = '.'
 
@@ -13,11 +18,6 @@ class Selection:
     @classmethod
     def from_strings(cls, lexeme: str, gramm_form: str | None, encl_chain: str | None) -> Selection:
         return cls(int(lexeme), gramm_form, encl_chain)
-
-    def __init__(self, lexeme: int, gramm_form: str | None, encl_chain: str | None):
-        self.lexeme = lexeme
-        self.gramm_form = gramm_form
-        self.encl_chain = encl_chain
 
     @classmethod
     def parse(cls, selection: str) -> Selection | None:
