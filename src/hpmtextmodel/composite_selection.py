@@ -39,4 +39,7 @@ class WordformSelection:
 
   def __str__(self) -> str:
     self.selections.sort()
-    return '{' + ','.join(map(str, self.selections)) + '}'
+    joined_selections = ','.join(map(str, self.selections))
+    if len(self.selections) <= 1:
+      return joined_selections
+    return '{' + joined_selections + '}'
