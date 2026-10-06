@@ -121,3 +121,9 @@ class Corpus:
       modified = text.unpack_alternative_segmentations()
       if modified:
         text.store_in(output_directory)
+
+  def assign_composite_selections(self, output_directory: str) -> None:
+    for text in self.texts:
+      modified = text.assign_composite_selections()
+      if modified:
+        text.store_in(output_directory)

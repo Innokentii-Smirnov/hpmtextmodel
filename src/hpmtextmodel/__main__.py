@@ -45,6 +45,14 @@ if __name__ == '__main__':
   )
   unpack_alt_segm_parser.add_argument('--' + OUTPUT_DIRECTORY_ARGUMENT_NAME,
                               help='A directory to store modified files')
+  assign_comp_segm_parser = subparsers.add_parser(
+    'assign_composite_selections',
+    help='Create composite selections for tokens with ambiguous word segmentation by aligning each morphological analysis to the word-form with minimal Levenshtein distance from the morphophonemic transcription in the analysis'
+  )
+  assign_comp_segm_parser.add_argument(
+    '--' + OUTPUT_DIRECTORY_ARGUMENT_NAME,
+    help='A directory to store modified files'
+  )
   args = parser.parse_args()
   corpus = Corpus(args.input_directory)
   subparser_args = {key: value for key, value in vars(args).items()

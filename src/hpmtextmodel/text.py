@@ -138,3 +138,11 @@ class Text:
         word.unpack_alternative_segmentations()
         modified = True
     return modified
+
+  def assign_composite_selections(self) -> bool:
+    modified = False
+    for word in self.words:
+      if word.word_segmentation_is_ambiguous():
+        word.assign_composite_selections()
+        modified = True
+    return modified
