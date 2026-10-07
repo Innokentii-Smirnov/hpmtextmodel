@@ -306,7 +306,7 @@ class Word:
   def selection_string(self, value: str) -> None:
     self.tag.attrs[SELECTION_ATTR] = value
 
-  def assign_composite_selections(self) -> None:
+  def assign_composite_selections(self, verbose: bool = False) -> None:
     if self.transcription is None:
       return
     transcription = preprocess_transcription(self.transcription)
@@ -333,6 +333,8 @@ class Word:
       for segm_index, word_segmentation in enumerate(alternative_segmentations):
         for word_index, wordform in enumerate(word_segmentation):
           dist = distance(segmentation, wordform)
+          if verbose:
+            print(morph.segmentation, wordform, dist)
           if dist < min_dist:
             min_dist = dist
             closest = (segm_index, word_index)
@@ -344,12 +346,11 @@ class Word:
     )
 
 if __name__ == '__main__':
-  word_xml = """
-  <w mrp0sel=" 1a 2a 3a 4a 5a 6a 7a 8a" mrp1="ḫowe-ne @ u.B. @ { a  → ABL/INS} @ noun @ " mrp2="ḫowe-ne-e @ u.B. @ { a  → RELAT.SG-DIR/LOC} @ noun @ " mrp3="ḫowe+ni @ u.B. @ { a  → .ABS} @ noun @ " mrp4="ḫowe-ne-va @ u.B. @ { a  → RELAT.SG-DAT} @ noun @ " mrp5="ḫowe+ni-ie-va @ u.B. @ { a  → 3POSS.SG-DAT} @ noun @ " mrp6="nippi@u.B.@{ a → .ABS}@noun@" mrp7="nipp-i@u.B.@{ a → ANTIP}@verb@" mrp8="evani-iffe@u.B.@{ a → 1POSS.SG.ABS}@noun@" trans="ḫōeni(-)eva(-)nippi">ḫu-u-e-ni(-)e-wa<subscr c="a"/>(-)ni-ib-bi<note c="Das erste NI ist sehr langgezogen, sodass hier eine Lücke zu vermuten wäre. Das zweite NI steht direkt am WA + Subskription. Vgl. aber den Beleg in Rs. 2."/></w>
-  """
+  import sys
+  word_xml = sys.argv[1]
   soup = BeautifulSoup(word_xml.strip(), 'xml')
   word_tag = soup.w
   assert word_tag is not None
   word = Word.parse(word_tag, 'Hur', soup)
-  word.assign_composite_selections()
+  word.assign_composite_selections(verbose=True)
   print(word.tag.prettify())
