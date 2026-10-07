@@ -309,9 +309,12 @@ class Word:
   def assign_composite_selections(self, verbose: bool = False) -> None:
     if self.transcription is None:
       return
-    transcription = preprocess_transcription(self.transcription)
-    alternative_segmentations = list(generate_segmentations(
-      OPTIONAL_BOUNDARY, TRANSCRIPTION_CONNECTING_STRING, transcription
+    transcription = self.transcription
+    alternative_segmentations = list(map(
+      lambda segmentation: list(map(preprocess_transcription, segmentation)),
+      generate_segmentations(
+        OPTIONAL_BOUNDARY, TRANSCRIPTION_CONNECTING_STRING, transcription
+      )
     ))
     composite_selections = list[CompositeSelection]()
     for word_segmentation in alternative_segmentations:
