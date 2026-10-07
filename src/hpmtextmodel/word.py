@@ -323,7 +323,7 @@ class Word:
       analysis = self.analyses[selection.lexeme]
       morph = Morph.parse(analysis)
       if morph is None:
-        return
+        continue
       segmentation = preprocess_segmentation(morph.segmentation)
       min_dist = math.inf
       closest = (0, 0)
