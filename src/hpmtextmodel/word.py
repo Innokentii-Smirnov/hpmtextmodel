@@ -317,6 +317,9 @@ class Word:
     for word_segmentation in alternative_segmentations:
       composite_selection = CompositeSelection(len(word_segmentation))
       composite_selections.append(composite_selection)
+    # Do not create composite analyses if no analyses are selected
+    if all(selection is None for selection in self.selections):
+      return
     for selection in self.selections:
       if selection is None:
         continue
