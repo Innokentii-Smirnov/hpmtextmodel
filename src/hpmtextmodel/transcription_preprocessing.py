@@ -1,3 +1,5 @@
+import re
+
 def removeMacron(s: str) -> str:
   return s \
     .replace('ā', 'a') \
@@ -26,6 +28,10 @@ def convertVoicedConsonantsToVoiceless(word: str) -> str:
              .replace('ž', 'š') \
              .replace('ġ', 'ḫ')
 
+VOWEL_BEFORE_VOWEL = re.compile(r'[aeiou](?=[+-=][aeiou])')
+def remove_vowel_before_vowel(word: str) -> str:
+  return VOWEL_BEFORE_VOWEL.sub('', word)
+
 def generalize_transcription(word: str) -> str:
   word = convertLabialFricativesToStops(word)
   word = convertMidVowelsToHigh(word)
@@ -39,4 +45,5 @@ def preprocess_transcription(transcription: str) -> str:
 
 def preprocess_segmentation(segmentation: str) -> str:
   segmentation = generalize_transcription(segmentation)
+  segmentation = remove_vowel_before_vowel(segmentation)
   return segmentation
