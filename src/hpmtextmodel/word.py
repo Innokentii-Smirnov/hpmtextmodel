@@ -10,6 +10,7 @@ from ambisegm.gensegm import generate_segmentations
 from .selection import Selection
 from .morph import Morph, SingleMorph, MultiMorph, Annotation
 from .composite_selection import CompositeSelection
+from .transcription_preprocessing import preprocess_transcription, preprocess_segmentation
 from re import compile
 from bs4 import Tag
 from bs4.element import NavigableString
@@ -308,8 +309,9 @@ class Word:
   def assign_composite_selections(self) -> None:
     if self.transcription is None:
       return
+    transcription = preprocess_transcription(self.transcription)
     alternative_segmentations = list(generate_segmentations(
-      OPTIONAL_BOUNDARY, TRANSCRIPTION_CONNECTING_STRING, self.transcription
+      OPTIONAL_BOUNDARY, TRANSCRIPTION_CONNECTING_STRING, transcription
     ))
     composite_selections = list[CompositeSelection]()
     for word_segmentation in alternative_segmentations:
@@ -322,11 +324,12 @@ class Word:
       morph = Morph.parse(analysis)
       if morph is None:
         return
+      segmentation = preprocess_segmentation(morph.segmentation)
       min_dist = math.inf
       closest = (0, 0)
       for segm_index, word_segmentation in enumerate(alternative_segmentations):
         for word_index, wordform in enumerate(word_segmentation):
-          dist = distance(morph.segmentation, wordform)
+          dist = distance(segmentation, wordform)
           if dist < min_dist:
             min_dist = dist
             closest = (segm_index, word_index)
