@@ -41,6 +41,7 @@ def generalize_transcription(word: str) -> str:
 def preprocess_transcription(transcription: str) -> str:
   transcription = removeMacron(transcription)
   transcription = generalize_transcription(transcription)
+  transcription = transcription.replace('-', '')
   return transcription
 
 def preprocess_segmentation(segmentation: str) -> str:
