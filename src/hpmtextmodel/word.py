@@ -38,14 +38,12 @@ bracket_tag_name_pairs = [
 ]
 
 ESC_OPT_BOUNDARY = regex.escape(OPTIONAL_BOUNDARY)
-EXCLUDE_PATTERN = regex.compile(
-  r'(?<=^(\]|\]?x)?)' + ESC_OPT_BOUNDARY + '|'
-  + ESC_OPT_BOUNDARY + r'(?=(\[|x\[?| )?$)'
+INTERAL_OPTIONAL_BOUNDARY = regex.compile(
+  r'(?<!^(\]|\]?x)?)' + ESC_OPT_BOUNDARY + r'(?!(\[|x\[?| )?$)'
 )
 
 def word_segmentation_is_ambiguous(transcription: str) -> bool:
-  return OPTIONAL_BOUNDARY in transcription and \
-    EXCLUDE_PATTERN.search(transcription) is None
+  return INTERAL_OPTIONAL_BOUNDARY.search(transcription) is not None
 
 def get_postdet(tag: Tag) -> str | None:
   children = list(tag.children)
