@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from collections.abc import Iterable
 import re
 import math
+import regex
 from more_itertools import first
 from bs4 import BeautifulSoup
 from Levenshtein import distance
@@ -36,17 +37,15 @@ bracket_tag_name_pairs = [
   ('⸣', 'laes_fin')
 ]
 
+ESC_OPT_BOUNDARY = regex.escape(OPTIONAL_BOUNDARY)
+EXCLUDE_PATTERN = regex.compile(
+  r'(?<=^(\]|\]?x)?)' + ESC_OPT_BOUNDARY + '|'
+  + ESC_OPT_BOUNDARY + r'(?=(\[|x\[?| )?$)'
+)
+
 def word_segmentation_is_ambiguous(transcription: str) -> bool:
   return OPTIONAL_BOUNDARY in transcription and \
-    not transcription.startswith(OPTIONAL_BOUNDARY) and \
-    not transcription.endswith(OPTIONAL_BOUNDARY) and \
-    not transcription.startswith(']' + OPTIONAL_BOUNDARY) and \
-    not transcription.startswith(']x' + OPTIONAL_BOUNDARY) and \
-    not transcription.startswith('x' + OPTIONAL_BOUNDARY) and \
-    not transcription.endswith(OPTIONAL_BOUNDARY + '[') and \
-    not transcription.endswith(OPTIONAL_BOUNDARY + 'x[') and \
-    not transcription.endswith(OPTIONAL_BOUNDARY + 'x') and \
-    not transcription.endswith(OPTIONAL_BOUNDARY + ' ')
+    EXCLUDE_PATTERN.search(transcription) is None
 
 def get_postdet(tag: Tag) -> str | None:
   children = list(tag.children)
@@ -326,7 +325,11 @@ class Word:
     for selection in self.selections:
       if selection is None:
         continue
-      analysis = self.analyses[selection.lexeme]
+      try:
+        analysis = self.analyses[selection.lexeme]
+      except KeyError:
+        print(self.tag.prettify())
+        raise
       morph = Morph.parse(analysis)
       if morph is None:
         continue
