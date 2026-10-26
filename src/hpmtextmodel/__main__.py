@@ -53,6 +53,14 @@ if __name__ == '__main__':
     '--' + OUTPUT_DIRECTORY_ARGUMENT_NAME,
     help='A directory to store modified files'
   )
+  extr_morph_tags_parser = subparsers.add_parser(
+    'extract_morph_tags',
+    help='Print the set of morphological tags in the corpus'
+  )
+  extr_morph_tags_parser.add_argument(
+    '--language', choices=['Hit', 'Hur'],
+    help='The language for which to extract the morphological tags'
+  )
   args = parser.parse_args()
   corpus = Corpus(args.input_directory)
   subparser_args = {key: value for key, value in vars(args).items()

@@ -10,9 +10,10 @@ from tqdm.auto import tqdm
 from os import path
 from .line import Line
 from itertools import chain
+import logging
 from logging import getLogger
 from .word import Word
-from .morph import Annotation
+from .morph import Morph, Annotation
 from .bracket import BracketType
 from .language import Language
 logger = getLogger(__name__)
@@ -127,3 +128,18 @@ class Corpus:
       modified = text.assign_composite_selections()
       if modified:
         text.store_in(output_directory)
+
+  def extract_morph_tags(self, language: str | None) -> None:
+    logging.disable()
+    morph_tags = set[str]()
+    for word in self.words:
+      if language is None or word.lang == language:
+        for selection in word.selections:
+          if selection is not None:
+            if selection.lexeme in word.analyses:
+              analysis = word.analyses[selection.lexeme]
+              morph = Morph.parse(analysis)
+              if morph is not None:
+                morph_tags |= set(morph.all_morph_tags)
+    for morph_tag in sorted(morph_tags):
+      print(morph_tag)

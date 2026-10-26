@@ -91,6 +91,10 @@ class Morph:
     def __getitem__(self, index: str) -> str | None:
       raise NotImplementedError
 
+    @property
+    def all_morph_tags(self) -> list[str]:
+      raise NotImplementedError
+
     def get_morph_tag(self, index: str | None) -> str | None:
       """Return the morphological tag with the specified index.
       :param index: A letter indicating the required morphological tag, or None
@@ -193,6 +197,10 @@ class SingleMorph(Morph):
                      index, self)
       return self.morph_tag
 
+    @property
+    def all_morph_tags(self) -> list[str]:
+      return [self.morph_tag]
+
 class MultiMorph(Morph):
     
     def __init__(self,
@@ -258,6 +266,10 @@ class MultiMorph(Morph):
       else:
         logger.error('The specified morphological tag index (%s) was not found in the morphological tag option dictionary of the morphological analysis (%s). No morphological tag option will be used.', index, self)
         return None
+
+    @property
+    def all_morph_tags(self) -> list[str]:
+      return list(self.morph_tags.values())
         
 def in_braces(string: str) -> bool:
     return string.startswith('{') and string.endswith('}')
