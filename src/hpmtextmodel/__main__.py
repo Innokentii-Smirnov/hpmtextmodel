@@ -8,7 +8,7 @@ MAIN_PARSER_ARGS = {
   'input_directory',
   'inplace'
 }
-LANGUAGES = ['Hit', 'Hur']
+LANGUAGES = ['Hit', 'Hur', 'Akk']
 
 if __name__ == '__main__':
   parser = ArgumentParser(
