@@ -62,6 +62,18 @@ if __name__ == '__main__':
     '--language', choices=LANGUAGES,
     help='The language for which to extract the morphological tags'
   )
+  find_wrf_types_parser = subparsers.add_parser(
+    'find_wordform_types',
+    help='Find the set of word-forms containing a specific substring'
+  )
+  find_wrf_types_parser.add_argument(
+    'substring',
+    help='The substring to search for'
+  )
+  find_wrf_types_parser.add_argument(
+    '--language', choices=LANGUAGES,
+    help='Restrict the search to the given language'
+  )
   args = parser.parse_args()
   corpus = Corpus(args.input_directory)
   subparser_args = {key: value for key, value in vars(args).items()
