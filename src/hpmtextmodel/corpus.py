@@ -144,12 +144,17 @@ class Corpus:
     for morph_tag in sorted(morph_tags):
       print(morph_tag)
 
-  def find_wordform_types(self, substring: str, language: Optional[str] = None) -> None:
+  def find_wordform_types(self, substring: str, language: Optional[str] = None,
+                          tag_name: Optional[str] = None) -> None:
     logging.disable()
     wordform_types = set[str]()
     for word in self.words:
       if language is None or word.lang == language:
-        if substring in word.transliteration:
-          wordform_types.add(word.transliteration)
+        if tag_name is None:
+          if substring in word.transliteration:
+            wordform_types.add(word.transliteration)
+        else:
+          if word.has_child_element(tag_name, substring):
+            wordform_types.add(word.transliteration)
     for wordform_type in sorted(wordform_types):
       print(wordform_type)

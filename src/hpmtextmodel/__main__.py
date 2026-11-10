@@ -74,6 +74,10 @@ if __name__ == '__main__':
     '--language', choices=LANGUAGES,
     help='Restrict the search to the given language'
   )
+  find_wrf_types_parser.add_argument(
+    '--tag-name',
+    help='Restrict the search to child elements with the given tag name'
+  )
   args = parser.parse_args()
   corpus = Corpus(args.input_directory)
   subparser_args = {key: value for key, value in vars(args).items()

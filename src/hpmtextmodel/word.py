@@ -349,6 +349,14 @@ class Word:
       in composite_selections if not composite_selection.is_empty()
     )
 
+  def has_child_element(self, tag_name: str, substring: str) -> bool:
+    for child in self.tag.children:
+      if isinstance(child, Tag):
+        if child.name == tag_name:
+          if child.string is not None and substring in child.string:
+            return True
+    return False
+
 if __name__ == '__main__':
   import sys
   word_xml = sys.argv[1]
