@@ -1,6 +1,13 @@
 [build-system]
 requires = [
-  "hatchling >= 1.26",
+  "hatchling >= 1.26"
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "hpmtextmodel"
+version = "0.0.1"
+dependencies = [
   "beautifulsoup4",
   "lxml",
   "tqdm",
@@ -8,8 +15,3 @@ requires = [
   "regex",
   "levenshtein"
 ]
-build-backend = "hatchling.build"
-
-[project]
-name = "hpmtextmodel"
-version = "0.0.1"

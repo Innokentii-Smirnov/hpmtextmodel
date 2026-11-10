@@ -8,6 +8,7 @@ MAIN_PARSER_ARGS = {
   'input_directory',
   'inplace'
 }
+LANGUAGES = ['Hit', 'Hur']
 
 if __name__ == '__main__':
   parser = ArgumentParser(
@@ -24,7 +25,7 @@ if __name__ == '__main__':
   repl_translit_subparser.add_argument('replacement', help='The replacement string')
   repl_translit_subparser.add_argument('--' + OUTPUT_DIRECTORY_ARGUMENT_NAME,
                                        help='A directory to store modified files')
-  repl_translit_subparser.add_argument('--language', choices=['Hit', 'Hur'],
+  repl_translit_subparser.add_argument('--language', choices=LANGUAGES,
                                        help='The language for which to perform the replacement')
   norm_brack_parser = subparsers.add_parser('normalize_brackets',
     help='Ensure zero bracket balance at word boundaries.'
@@ -33,7 +34,7 @@ if __name__ == '__main__':
                                  help='The type of brackets to normalize')
   norm_brack_parser.add_argument('--' + OUTPUT_DIRECTORY_ARGUMENT_NAME,
                                  help='A directory to store modified files')
-  norm_brack_parser.add_argument('--language', choices=['Hit', 'Hur'],
+  norm_brack_parser.add_argument('--language', choices=LANGUAGES,
                                  help='Perform bracket normalization only for lines that contain a word in the given language')
   rewrite_parser = subparsers.add_parser('rewrite',
     help='Rewrite the corpus, normalizing formatting like the order of some XML attributes'
@@ -58,7 +59,7 @@ if __name__ == '__main__':
     help='Print the set of morphological tags in the corpus'
   )
   extr_morph_tags_parser.add_argument(
-    '--language', choices=['Hit', 'Hur'],
+    '--language', choices=LANGUAGES,
     help='The language for which to extract the morphological tags'
   )
   args = parser.parse_args()
